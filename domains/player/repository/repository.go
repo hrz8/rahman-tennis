@@ -21,11 +21,16 @@ func NewRepository(db *gorm.DB) PlayerDomain.Repository {
 }
 
 func (h handler) GetAll(db *gorm.DB) (*[]models.Player, error) {
-	var err error
 	players := &[]models.Player{}
-	err = db.Model(&models.Player{}).Find(players).Error
-	if err != nil {
-		return &[]models.Player{}, err
+	if err := db.Model(&models.Player{}).Find(players).Error; err != nil {
+		return nil, err
 	}
-	return players, err
+	return players, nil
+}
+
+func (h handler) Create(db *gorm.DB, u *models.Player) (*models.Player, error) {
+	if err := db.Debug().Create(&u).Error; err != nil {
+		return nil, err
+	}
+	return u, nil
 }

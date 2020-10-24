@@ -10,5 +10,6 @@ import (
 type (
 	Repository interface {
 		GetAll(db *gorm.DB) (*[]models.Player, error)
+		Create(db *gorm.DB, u *models.Player) (*models.Player, error)
 	}
 )

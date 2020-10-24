@@ -14,5 +14,7 @@ type Player struct {
 
 // CreatePlayerPayload represent Player payload for creating Player
 type CreatePlayerPayload struct {
-	Name string `json:"name"`
+	Name              string `json:"name" validate:"required"`
+	ContainerQty      uint64 `json:"container_qty" validate:"required,gt=0"`
+	ContainerCapacity uint64 `json:"container_capacity" validate:"required,gt=0"`
 }
