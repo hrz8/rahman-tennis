@@ -58,12 +58,12 @@ func (h handler) GetByID(c echo.Context) (*models.Player, error) {
 
 	paramsPlayerID := c.Param("playerID")
 	if paramsPlayerID == "" {
-		return nil, errors.New("invalid uuid parameter")
+		return nil, errors.New("unkown parameter")
 	}
 
 	playerID, err := uuid.FromString(paramsPlayerID)
 	if err != nil {
-		return nil, errors.New("unkown parameter")
+		return nil, errors.New("invalid uuid parameter")
 	}
 
 	player, err := h.repository.GetByID(db, playerID)
