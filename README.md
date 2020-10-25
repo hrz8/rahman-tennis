@@ -34,6 +34,13 @@ $ go run main.go migrate
 $ go run main.go
 ```
 
+### Test Get Container and Add Ball
+
+``` bash
+# test file in the `domains/container/service` path
+$ go test
+```
+
 ### Available Endpoints
 
 Apps run in: `HOST:APP_PORT`
@@ -177,13 +184,6 @@ Apps run in: `HOST:APP_PORT`
         "status": 200
     }
     ```
-
-### Test Get Container and Add Ball
-
-``` bash
-# test file in the `domains/container/service` path
-$ go test
-```
 
 ## App Info
 
