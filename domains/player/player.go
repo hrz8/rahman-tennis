@@ -3,6 +3,7 @@ package player
 import (
 	"gorm.io/gorm"
 
+	"github.com/gofrs/uuid"
 	"github.com/hrz8/rahman-tennis/models"
 )
 
@@ -10,6 +11,7 @@ import (
 type (
 	Repository interface {
 		GetAll(db *gorm.DB) (*[]models.Player, error)
-		Create(db *gorm.DB, u *models.Player) (*models.Player, error)
+		Create(db *gorm.DB, p *models.Player) (*models.Player, error)
+		GetByID(db *gorm.DB, id uuid.UUID) (*models.Player, error)
 	}
 )

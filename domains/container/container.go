@@ -3,6 +3,7 @@ package container
 import (
 	"gorm.io/gorm"
 
+	"github.com/gofrs/uuid"
 	"github.com/hrz8/rahman-tennis/models"
 )
 
@@ -10,5 +11,7 @@ import (
 type (
 	Repository interface {
 		GetAll(db *gorm.DB) (*[]models.Container, error)
+		GetByID(db *gorm.DB, id uuid.UUID) (*models.Container, error)
+		UpdateOne(db *gorm.DB, c *models.Container, nc *models.Container) (*models.Container, error)
 	}
 )

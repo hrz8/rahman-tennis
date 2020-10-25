@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
+	"github.com/hrz8/rahman-tennis/models"
 	"github.com/hrz8/rahman-tennis/shared/config"
 	"github.com/hrz8/rahman-tennis/shared/container"
 	"github.com/hrz8/rahman-tennis/shared/database"
@@ -36,10 +38,14 @@ func main() {
 		panic(fmt.Sprintf("[ERROR] failed open mysql connection: %s", err.Error()))
 	}
 
-	// mysqlSess.Debug().AutoMigrate(
-	// 	&models.Container{},
-	// 	&models.Player{},
-	// )
+	if len(os.Args) > 1 {
+		if os.Args[1] == "migrate" {
+			mysqlSess.Debug().AutoMigrate(
+				&models.Player{},
+				&models.Container{},
+			)
+		}
+	}
 
 	e.Validator = &lib.CustomValidator{Validator: validator.New()}
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -52,8 +58,11 @@ func main() {
 		}
 	})
 
-	PlayerService.InitService(e, PlayerRepository.NewRepository(mysqlSess))
-	ContainerService.InitService(e, ContainerRepository.NewRepository(mysqlSess))
+	containerRepo := ContainerRepository.NewRepository(mysqlSess)
+	playerRepo := PlayerRepository.NewRepository(mysqlSess)
+
+	PlayerService.InitService(e, playerRepo, containerRepo)
+	ContainerService.InitService(e, containerRepo)
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", appConfig.GetAppPort())))
 }
