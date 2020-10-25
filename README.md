@@ -69,6 +69,7 @@ Apps run in: `HOST:APP_PORT`
 11. `GET /api/v1/containers/player/4db77dd4-09b0-4633-aed2-a8382e17a748`: Get list of new and not ready yet player's containers
 
     ```json
+    # Response
     {
         "data": {
             "containers": [
@@ -124,6 +125,7 @@ Apps run in: `HOST:APP_PORT`
 12. `GET /api/v1/containers/player/b26eb8e1-f55a-4041-8eb2-4b9f9ce6f755`: Get list of ready and verified player's containers 🥳✅
 
     ```json
+    # Response
     {
         "data": {
             "containers": [
@@ -176,7 +178,7 @@ Apps run in: `HOST:APP_PORT`
     }
     ```
 
-### Test
+### Test Get Container and Add Ball
 
 ``` bash
 # test file in the `domains/container/service` path
