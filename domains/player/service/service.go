@@ -16,7 +16,7 @@ type (
 	}
 )
 
-// InitService will return REST
+// InitService will return REST of player-domain
 func InitService(e *echo.Echo, usecase PlayerDomain.Usecase) {
 	h := handler{
 		usecase: usecase,

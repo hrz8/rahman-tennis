@@ -20,7 +20,7 @@ type (
 	}
 )
 
-// NewUsecase return implementation of methods in transaction.Repositoru
+// NewUsecase return implementation of methods in player-domain.Repository
 func NewUsecase(repo PlayerDomain.Repository, containerRepo ContainerDomain.Repository) PlayerDomain.Usecase {
 	return &handler{
 		repository:          repo,

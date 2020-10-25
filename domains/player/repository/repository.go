@@ -25,7 +25,7 @@ func NewRepository(db *gorm.DB) PlayerDomain.Repository {
 func (h handler) GetAll(db *gorm.DB) (*[]models.Player, error) {
 	players := &[]models.Player{}
 	if err := db.Preload("Containers").Find(players).Error; err != nil {
-		return nil, err
+		return players, err
 	}
 	return players, nil
 }

@@ -22,13 +22,21 @@ func NewRepository(db *gorm.DB) ContainerDomain.Repository {
 }
 
 func (h handler) GetAll(db *gorm.DB) (*[]models.Container, error) {
-	var err error
 	containers := &[]models.Container{}
-	err = db.Model(&models.Container{}).Find(containers).Error
-	if err != nil {
-		return &[]models.Container{}, err
+	if err := db.Model(&models.Container{}).Find(containers).Error; err != nil {
+		return containers, err
 	}
-	return containers, err
+	return containers, nil
+}
+
+func (h handler) GetByPlayerID(db *gorm.DB, pid uuid.UUID) (*[]models.Container, error) {
+	containers := &[]models.Container{}
+	if err := db.Where(&models.Container{
+		PlayerID: pid,
+	}).Find(containers).Error; err != nil {
+		return nil, err
+	}
+	return containers, nil
 }
 
 func (h handler) GetByID(db *gorm.DB, id uuid.UUID) (*models.Container, error) {

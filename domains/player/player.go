@@ -4,8 +4,9 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/gofrs/uuid"
-	"github.com/hrz8/rahman-tennis/models"
 	"github.com/labstack/echo/v4"
+
+	"github.com/hrz8/rahman-tennis/models"
 )
 
 type (
