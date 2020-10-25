@@ -17,6 +17,8 @@ import (
 	ContainerRepository "github.com/hrz8/rahman-tennis/domains/container/repository"
 	PlayerRepository "github.com/hrz8/rahman-tennis/domains/player/repository"
 
+	PlayerUsecase "github.com/hrz8/rahman-tennis/domains/player/usecase"
+
 	ContainerService "github.com/hrz8/rahman-tennis/domains/container/service"
 	PlayerService "github.com/hrz8/rahman-tennis/domains/player/service"
 )
@@ -58,10 +60,12 @@ func main() {
 		}
 	})
 
-	containerRepo := ContainerRepository.NewRepository(mysqlSess)
 	playerRepo := PlayerRepository.NewRepository(mysqlSess)
+	containerRepo := ContainerRepository.NewRepository(mysqlSess)
 
-	PlayerService.InitService(e, playerRepo, containerRepo)
+	playerUsecase := PlayerUsecase.NewUsecase(playerRepo, containerRepo)
+
+	PlayerService.InitService(e, playerUsecase)
 	ContainerService.InitService(e, containerRepo)
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", appConfig.GetAppPort())))

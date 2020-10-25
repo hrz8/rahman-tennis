@@ -1,30 +1,25 @@
 package service
 
 import (
-	"math/rand"
 	"net/http"
 
 	"github.com/gofrs/uuid"
 	"github.com/labstack/echo/v4"
 
-	ContainerDomain "github.com/hrz8/rahman-tennis/domains/container"
 	PlayerDomain "github.com/hrz8/rahman-tennis/domains/player"
 	"github.com/hrz8/rahman-tennis/models"
-	"github.com/hrz8/rahman-tennis/shared/lib"
 )
 
 type (
 	handler struct {
-		repository          PlayerDomain.Repository
-		containerRepository ContainerDomain.Repository
+		usecase PlayerDomain.Usecase
 	}
 )
 
 // InitService will return REST
-func InitService(e *echo.Echo, repo PlayerDomain.Repository, containerRepo ContainerDomain.Repository) {
+func InitService(e *echo.Echo, usecase PlayerDomain.Usecase) {
 	h := handler{
-		repository:          repo,
-		containerRepository: containerRepo,
+		usecase: usecase,
 	}
 
 	e.GET("/api/v1/players", h.GetAll)
@@ -34,16 +29,14 @@ func InitService(e *echo.Echo, repo PlayerDomain.Repository, containerRepo Conta
 }
 
 func (h handler) GetAll(c echo.Context) error {
-	ac := c.(*lib.AppContext)
-	db := ac.MysqlSession
-
-	players, err := h.repository.GetAll(db)
+	players, err := h.usecase.GetAll(c)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"status": http.StatusInternalServerError,
 			"error":  err.Error(),
 		})
 	}
+
 	return c.JSON(http.StatusOK, echo.Map{
 		"status": http.StatusOK,
 		"data":   players,
@@ -51,21 +44,18 @@ func (h handler) GetAll(c echo.Context) error {
 }
 
 func (h handler) Create(c echo.Context) error {
-	ac := c.(*lib.AppContext)
-	db := ac.MysqlSession
-
 	payload := &models.CreatePlayerPayload{}
 
 	if err := c.Bind(payload); err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"status": http.StatusInternalServerError,
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"status": http.StatusBadRequest,
 			"error":  err.Error(),
 		})
 	}
 
 	if err := c.Validate(payload); err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"status": http.StatusInternalServerError,
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"status": http.StatusBadRequest,
 			"error":  err.Error(),
 		})
 	}
@@ -81,47 +71,14 @@ func (h handler) Create(c echo.Context) error {
 	}
 
 	id, _ := uuid.NewV4()
-	player := &models.Player{
+	newPlayer := &models.Player{
 		ID:          id,
 		Name:        payload.Name,
 		ReadyToPlay: false,
 		Containers:  containers,
 	}
 
-	playerResponse, err := h.repository.Create(db, player)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"status": http.StatusInternalServerError,
-			"error":  err.Error(),
-		})
-	}
-	return c.JSON(http.StatusOK, echo.Map{
-		"status": http.StatusOK,
-		"data":   playerResponse,
-	})
-}
-
-func (h handler) GetByID(c echo.Context) error {
-	ac := c.(*lib.AppContext)
-	db := ac.MysqlSession
-
-	paramsPlayerID := c.Param("playerID")
-	if paramsPlayerID == "" {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"status": http.StatusInternalServerError,
-			"error":  "invalid uuid parameter",
-		})
-	}
-
-	playerID, err := uuid.FromString(paramsPlayerID)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"status": http.StatusInternalServerError,
-			"error":  "unkown parameter",
-		})
-	}
-
-	player, err := h.repository.GetByID(db, playerID)
+	player, err := h.usecase.Create(c, newPlayer)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"status": http.StatusInternalServerError,
@@ -135,52 +92,48 @@ func (h handler) GetByID(c echo.Context) error {
 	})
 }
 
-func (h handler) AddBall(c echo.Context) error {
-	ac := c.(*lib.AppContext)
-	db := ac.MysqlSession
-
-	paramsPlayerID := c.Param("playerID")
-	if paramsPlayerID == "" {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"status": http.StatusInternalServerError,
-			"error":  "invalid uuid parameter",
-		})
-	}
-
-	playerID, err := uuid.FromString(paramsPlayerID)
+func (h handler) GetByID(c echo.Context) error {
+	player, err := h.usecase.GetByID(c)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"status": http.StatusInternalServerError,
-			"error":  "unkown parameter",
-		})
-	}
+		var status int
+		switch err.Error() {
+		case "invalid uuid parameter", "unkown parameter":
+			status = http.StatusBadRequest
+		default:
+			status = http.StatusInternalServerError
+		}
 
-	player, err := h.repository.GetByID(db, playerID)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"status": http.StatusInternalServerError,
+		return c.JSON(status, echo.Map{
+			"status": status,
 			"error":  err.Error(),
 		})
 	}
 
-	containerIdx := rand.Intn(len((*player).Containers))
-	randomContainer := (*player).Containers[containerIdx]
-	newContainer := models.Container{
-		BallQty: randomContainer.BallQty + 1,
-	}
-
-	updatedContainer, err := h.containerRepository.UpdateOne(db, &randomContainer, &newContainer)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"status": http.StatusInternalServerError,
-			"error":  err.Error(),
-		})
-	}
-
-	randomContainer.BallQty = updatedContainer.BallQty
-	(*player).Containers[containerIdx] = randomContainer
 	return c.JSON(http.StatusOK, echo.Map{
 		"status": http.StatusOK,
-		"data":   *player,
+		"data":   player,
+	})
+}
+
+func (h handler) AddBall(c echo.Context) error {
+	player, err := h.usecase.AddBall(c)
+	if err != nil {
+		var status int
+		switch err.Error() {
+		case "user already ready":
+			status = http.StatusBadRequest
+		default:
+			status = http.StatusInternalServerError
+		}
+
+		return c.JSON(status, echo.Map{
+			"status": status,
+			"error":  err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"status": http.StatusOK,
+		"data":   player,
 	})
 }

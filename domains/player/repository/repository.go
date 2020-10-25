@@ -4,6 +4,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/gofrs/uuid"
+
 	PlayerDomain "github.com/hrz8/rahman-tennis/domains/player"
 	"github.com/hrz8/rahman-tennis/models"
 )
@@ -42,4 +43,11 @@ func (h handler) GetByID(db *gorm.DB, id uuid.UUID) (*models.Player, error) {
 		return nil, err
 	}
 	return &p, nil
+}
+
+func (h handler) UpdateOne(db *gorm.DB, p *models.Player, np *models.Player) (*models.Player, error) {
+	if err := db.Model(&p).Updates(np).Error; err != nil {
+		return nil, err
+	}
+	return np, nil
 }

@@ -35,6 +35,7 @@ func (h handler) GetAll(c echo.Context) error {
 			"error":  err.Error(),
 		})
 	}
+
 	return c.JSON(http.StatusOK, echo.Map{
 		"status": http.StatusOK,
 		"data":   containers,
