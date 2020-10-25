@@ -8,7 +8,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
-	"github.com/hrz8/rahman-tennis/models"
 	"github.com/hrz8/rahman-tennis/shared/config"
 	"github.com/hrz8/rahman-tennis/shared/container"
 	"github.com/hrz8/rahman-tennis/shared/database"
@@ -43,10 +42,7 @@ func main() {
 
 	if len(os.Args) > 1 {
 		if os.Args[1] == "migrate" {
-			mysqlSess.Debug().AutoMigrate(
-				&models.Player{},
-				&models.Container{},
-			)
+			lib.Migrate(mysqlSess)
 		}
 	}
 

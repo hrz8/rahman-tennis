@@ -11,9 +11,3 @@ type Container struct {
 	Capacity uint64    `gorm:"column:capacity;min:1;default:1" json:"capacity"`
 	BallQty  uint64    `gorm:"column:ball_qty;min:0;default:0" json:"ballQty"`
 }
-
-// CreateContainerPayload represent Container payload for creating Container
-type CreateContainerPayload struct {
-	PlayerID uuid.UUID `json:"playerId"`
-	Capacity int       `json:"capacity"`
-}

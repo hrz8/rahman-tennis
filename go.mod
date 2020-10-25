@@ -9,12 +9,14 @@ require (
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/hrz8/go-take-arest v0.0.0-20201022163743-9bc2d22fd25f
+	github.com/kerti/evm/02-kitara-store v0.0.0-20200903034258-18aef3296834
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/echo/v4 v4.1.17
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.7.1
+	github.com/stretchr/testify v1.6.1
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897 // indirect
 	golang.org/x/net v0.0.0-20201021035429-f5854403a974 // indirect
