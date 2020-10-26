@@ -38,6 +38,7 @@ $ go run main.go
 
 ``` bash
 # test file in the `domains/container/service` path
+# change host url and port constant if you modify app.config
 $ go test
 ```
 

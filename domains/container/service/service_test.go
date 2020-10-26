@@ -11,6 +11,8 @@ import (
 )
 
 const (
+	// change the HOST and PORT first if you want to run the test locally
+	// and you had modify the app configuration
 	url          = "http://127.0.0.1:8099/api/v1/players/"
 	urlContainer = "http://127.0.0.1:8099/api/v1/containers/player/"
 	rahmanID     = "4db77dd4-09b0-4633-aed2-a8382e17a748"
