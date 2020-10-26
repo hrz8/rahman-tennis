@@ -77,33 +77,39 @@ func (h handler) GetByID(c echo.Context) (*models.Player, error) {
 func (h handler) AddBall(c echo.Context) (*models.Player, error) {
 	ac := c.(*lib.AppContext)
 	db := ac.MysqlSession
+	trx := db.Begin()
 
 	player, err := h.GetByID(c)
 	if err != nil {
+		trx.Rollback()
 		return nil, err
 	}
 
 	if player.ReadyToPlay {
+		trx.Rollback()
 		return nil, errors.New("user already ready")
 	}
 
 	containerIdx := rand.Intn(len((*player).Containers))
 	randomContainer := (*player).Containers[containerIdx]
 
-	updatedContainer, err := h.containerRepository.UpdateOne(db, &randomContainer, &models.Container{
+	updatedContainer, err := h.containerRepository.UpdateOne(trx, &randomContainer, &models.Container{
 		BallQty: randomContainer.BallQty + 1,
 	})
 	if err != nil {
+		trx.Rollback()
 		return nil, err
 	}
 
 	randomContainer.BallQty = updatedContainer.BallQty
 	if randomContainer.BallQty == randomContainer.Capacity {
-		h.repository.UpdateOne(db, player, &models.Player{
+		h.repository.UpdateOne(trx, player, &models.Player{
 			ReadyToPlay: true,
 		})
 	}
 
 	(*player).Containers[containerIdx] = randomContainer
+
+	trx.Commit()
 	return player, nil
 }
