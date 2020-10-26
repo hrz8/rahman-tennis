@@ -48,6 +48,8 @@ $ go test
 
 Apps run in: `HOST:APP_PORT` (for local)
 
+For public : `https://frozen-thicket-21413.herokuapp.com`
+
 1. `GET /api/v1/players`: Get list of all players
 
 2. `GET /api/v1/players/:playerID`: Get player data by ID
