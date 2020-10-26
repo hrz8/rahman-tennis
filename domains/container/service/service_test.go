@@ -27,7 +27,8 @@ func TestNotReadyAndVerified(t *testing.T) {
 	rahmanCanAddBall = iv1.Bool()
 
 	// test for rahman, expected response is OK and still can PUT ball
-	// or if test is run multiple times response is going to be BadRequest and cannot PUT ball
+	// or if test is run multiple times until container full,
+	// response will going to be BadRequest and cannot PUT ball
 	reqAddBallRahman, err := http.NewRequest("PUT", fmt.Sprintf("%s%s", url, rahmanID), nil)
 	assert.Nil(t, err)
 	reqAddBallRahman.Header.Set("Content-Type", "application/json")
