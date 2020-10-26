@@ -1,5 +1,7 @@
 # Rahman Tennis (Try Go 1.15)
 
+Public API: https://frozen-thicket-21413.herokuapp.com
+
 ## Quick Start
 
 ### Requirements
@@ -44,7 +46,7 @@ $ go test
 
 ### Available Endpoints
 
-Apps run in: `HOST:APP_PORT`
+Apps run in: `HOST:APP_PORT` (for local)
 
 1. `GET /api/v1/players`: Get list of all players
 
